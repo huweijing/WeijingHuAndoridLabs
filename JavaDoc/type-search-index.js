@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"com.example.weijinghusandoridlabs.databinding","l":"ActivityMainBinding"},{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.example.weijinghusandoridlabs","l":"MainActivity"}];updateSearchResults();
