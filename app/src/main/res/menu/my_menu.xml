@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/id_help"
+        android:icon="@drawable/house"
+        android:title="Help"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/id_reset"
+        android:icon="@drawable/key"
+        android:title="Reset"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/id_download"
+        android:icon="@drawable/computer"
+        android:title="Download"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/id_delete"
+        android:icon="@drawable/garbage"
+        android:title="Delete"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/id_about"
+        android:icon="@drawable/about"
+        android:title="About"
+        app:showAsAction="ifRoom" />
+
+</menu>

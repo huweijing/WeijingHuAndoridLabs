@@ -14,6 +14,9 @@
         <!-- Primary text color.-->
         <item name="android:textColor">@color/my_text</item>
 
+        <!-- use toolbars -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="Theme.WeijingHusAndoridLabs" parent="Base.Theme.WeijingHusAndoridLabs" />

@@ -1,9 +1,13 @@
 package com.example.weijinghusandoridlabs;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,11 +32,16 @@ import android.widget.Toast;
                  */
                 private TextView textViewResult = null;
 
+                protected Toolbar theToolbar;
+
                 @SuppressLint("SetTextI18n")
                 @Override
                 protected void onCreate(Bundle savedInstanceState) {
                     super.onCreate(savedInstanceState);
                     setContentView(R.layout.activity_main);
+
+                    theToolbar = findViewById(R.id.myToolbar);
+                    setSupportActionBar(theToolbar); //adds your toolbar,this will call onCreateOptionMenu
 
                     editTextPassword = findViewById(R.id.editTextPassword);
                     // This holds the button of the login
@@ -52,7 +61,38 @@ import android.widget.Toast;
                     });
                 }
 
-                /**
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+
+            String message = "";
+
+            if (item.getItemId() == R.id.id_help)
+                    message ="You click on help";
+            else if (item.getItemId() == R.id.id_reset)
+                    message ="You click on reset";
+            else if (item.getItemId() == R.id.id_download)
+                    message ="You click on download";
+            else if (item.getItemId() ==R.id.id_delete)
+                    message ="You click on delete";
+            else if(item.getItemId() == R.id.id_about)
+                    message ="Version 1.0, created by Weijing Hu";
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        @Override
+        public boolean onCreateOptionsMenu(Menu menu) {
+                    super.onCreateOptionsMenu(menu);
+
+
+                    //fill in the rest
+                    getMenuInflater().inflate(R.menu.my_menu, menu);
+
+                    return true;
+        }
+
+        /**
                  * This function check if this string has an Upper Case letter, a lower case letter, a number, and a special symbol (#$%^&*!@?).
                  * If it is missing any of these 4 requirements, then show a Toast message saying which requirement is missing,
                  * like "Your password does not have an upper case letter", or "Your password does not have a special symbol".
