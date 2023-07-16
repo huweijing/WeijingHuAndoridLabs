@@ -197,6 +197,4 @@ public class ChatRoom extends AppCompatActivity {
         binding.recycleView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-
-
 }
