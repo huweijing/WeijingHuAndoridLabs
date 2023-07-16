@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.weijinghusandoridlabs.databinding.ActivityChatRoomBinding;
@@ -29,86 +31,58 @@ public class ChatRoom extends AppCompatActivity {
 
     ActivityChatRoomBinding binding;
     ArrayList<ChatMessage> messages = new ArrayList<>();
-    private RecyclerView.Adapter myAdapter;
-    private ChatRoomViewModel chatModel;
+
+    protected Button myButton;
+    protected RecyclerView recyclerView;
 
     ChatMessageDAO mDAO;
+    MessageDatabase db;
 
-    class MyRowHolder extends RecyclerView.ViewHolder {
-        TextView messageText;
-        TextView timeText;
-
-        public MyRowHolder(@NonNull View itemView) {
-            super(itemView);
-
-            itemView.setOnClickListener(click -> {
-
-                /*
-                int position= getAbsoluteAdapterPosition();
-                AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
-
-                AlertDialog.Builder no = builder.setNegativeButton("No", (dialog, cl) -> {
-                });
-                builder.setMessage("Do you want to delete the message:" + messageText.getText());
-                 builder.setTitle("Question:");
-                builder.setNegativeButton("No", (dialog, cl) ->{} );
-                builder.setPositiveButton("Yes",((dialog, cl) ->{
-                            ChatMessage m  = messages.get(position);
-                            mDAO.deleteMessage(m);
-                            messages.remove(position);
-                            myAdapter.notifyItemRemoved(position);
-                            
-                            Snackbar.make(messageText, "deleted message #"+position, Snackbar.LENGTH_LONG)
-                                    .setAction("Undo", (cl2) ->{
-                                        messages.add(position, m);
-                                        myAdapter.notifyItemInserted(position);
-                                    })
-                                    .show();
-                        } ))
-                        .create().show();
-            });
-            */
-
-                int index = getAbsoluteAdapterPosition();
-                //ChatMessage selectedMessage = messages.get(index);
-
-                chatModel.selectedMessage.postValue(messages.get(index));
-
-                messageText = itemView.findViewById(R.id.message);
-                timeText = itemView.findViewById(R.id.time);
-            });
-        }
-    }
-
+    private ChatRoomViewModel chatModel;
+    private RecyclerView.Adapter myAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //create database
-        MessageDatabase db = Room.databaseBuilder(getApplicationContext(), MessageDatabase.class, "database-name").allowMainThreadQueries().build();
-        //create dao
-        mDAO = db.cmDAO();
-        
+        binding = ActivityChatRoomBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        //        binding.sendButton.setOnClickListener(click ->{
+//            messages.add(binding.textInput.getText().toString());
+//            myAdapter.notifyItemChanged(messages.size()-1);
+//            //clear the previous text
+//            binding.textInput.setText("");
+//        });
+
+        FrameLayout fragmentLocation = findViewById( R.id.fragmentLocation);
+        boolean IAmTablet = fragmentLocation != null;
+
         //create chat view model
         chatModel = new ViewModelProvider(this).get(ChatRoomViewModel.class);
 
         chatModel.selectedMessage.observe(this, newMessage ->{
 
             if(newMessage != null) {
-                //new Message is what is posted to the value
-                MessageDetailsFragment detailsFragment = new MessageDetailsFragment(newMessage);
                 //show the fragment on screen:
                 FragmentManager fMgr = getSupportFragmentManager();
 
                 FragmentTransaction tx = fMgr.beginTransaction();
+
+                //new Message is what is posted to the value
+                MessageDetailsFragment detailsFragment = new MessageDetailsFragment(newMessage);
+
+                tx.add(R.id.fragmentLocation, detailsFragment);
                 tx.addToBackStack("Doesn't matter which string");
-                tx.add(R.id.fragment_location, detailsFragment);
                 tx.commit(); //go and do for it
             }
     });
 
+        //create database
+        db = Room.databaseBuilder(getApplicationContext(), MessageDatabase.class, "database-name").allowMainThreadQueries().build();
+        //create dao
+        mDAO = db.cmDAO();
 
         messages = chatModel.messages.getValue();
+
         //get all messages from the database at the beginning
         if (messages == null) {
             chatModel.messages.setValue(messages = new ArrayList<>());
@@ -122,16 +96,6 @@ public class ChatRoom extends AppCompatActivity {
             });
             // chatModel.messages.postValue( messages = new ArrayList<>());
         }
-
-        binding = ActivityChatRoomBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-//        binding.sendButton.setOnClickListener(click ->{
-//            messages.add(binding.textInput.getText().toString());
-//            myAdapter.notifyItemChanged(messages.size()-1);
-//            //clear the previous text
-//            binding.textInput.setText("");
-//        });
 
         // Set click listener for Send button
         binding.sendButton.setOnClickListener(click -> {
@@ -222,6 +186,52 @@ public class ChatRoom extends AppCompatActivity {
         });
 
         binding.recycleView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    class MyRowHolder extends RecyclerView.ViewHolder {
+        TextView messageText;
+        TextView timeText;
+
+        public MyRowHolder(@NonNull View itemView) {
+            super(itemView);
+
+            itemView.setOnClickListener(click -> {
+
+                /*
+                int position= getAbsoluteAdapterPosition();
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
+
+                AlertDialog.Builder no = builder.setNegativeButton("No", (dialog, cl) -> {
+                });
+                builder.setMessage("Do you want to delete the message:" + messageText.getText());
+                 builder.setTitle("Question:");
+                builder.setNegativeButton("No", (dialog, cl) ->{} );
+                builder.setPositiveButton("Yes",((dialog, cl) ->{
+                            ChatMessage m  = messages.get(position);
+                            mDAO.deleteMessage(m);
+                            messages.remove(position);
+                            myAdapter.notifyItemRemoved(position);
+
+                            Snackbar.make(messageText, "deleted message #"+position, Snackbar.LENGTH_LONG)
+                                    .setAction("Undo", (cl2) ->{
+                                        messages.add(position, m);
+                                        myAdapter.notifyItemInserted(position);
+                                    })
+                                    .show();
+                        } ))
+                        .create().show();
+            });
+            */
+
+                int index = getAbsoluteAdapterPosition();
+                //ChatMessage selectedMessage = messages.get(index);
+
+                chatModel.selectedMessage.postValue(messages.get(index));
+
+                messageText = itemView.findViewById(R.id.message);
+                timeText = itemView.findViewById(R.id.time);
+            });
+        }
     }
 
 
