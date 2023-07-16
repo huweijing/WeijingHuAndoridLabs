@@ -1,6 +1,8 @@
 package com.example.weijinghusandoridlabs;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -9,7 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-    /**
+import com.example.weijinghusandoridlabs.databinding.ActivityMainBinding;
+
+/**
      * This class is used to take action of the week5 activity layout, when the user input the password tp try to login in
      * it should check if this string has an Upper Case letter, a lower case letter, a number, and a special symbol (#$%^&*!@?).
      * If it is missing any of these 4 requirements, then show a Toast message saying which requirement is missing,
@@ -28,11 +32,20 @@ import android.widget.Toast;
                  */
                 private TextView textViewResult = null;
 
-                @SuppressLint("SetTextI18n")
+               //MainActivityViewModel model;
+
+               RecyclerView.Adapter myAdapter;
+
                 @Override
                 protected void onCreate(Bundle savedInstanceState) {
-                    super.onCreate(savedInstanceState);
-                    setContentView(R.layout.activity_main);
+                    super.onCreate(savedInstanceState); //calling onCreate from parent class
+
+                    ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+                    //loads on XML file on the page
+                    setContentView(binding.getRoot());
+
+                    //myDB = Room.databaseBuilder(getApplicationContext(), MessageDatabase.class, "database-name").build();
+                    //myDAO = myDB.cmDAO(); //the only function in MessageDatabase
 
                     editTextPassword = findViewById(R.id.editTextPassword);
                     // This holds the button of the login

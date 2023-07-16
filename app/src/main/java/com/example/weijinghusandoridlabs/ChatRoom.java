@@ -1,14 +1,16 @@
 package com.example.weijinghusandoridlabs;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -16,7 +18,6 @@ import android.widget.TextView;
 import com.example.weijinghusandoridlabs.databinding.ActivityChatRoomBinding;
 import com.example.weijinghusandoridlabs.databinding.SentMessageBinding;
 import com.example.weijinghusandoridlabs.databinding.ReceiveMessageBinding;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,11 +37,13 @@ public class ChatRoom extends AppCompatActivity {
     class MyRowHolder extends RecyclerView.ViewHolder {
         TextView messageText;
         TextView timeText;
+
         public MyRowHolder(@NonNull View itemView) {
             super(itemView);
 
-            itemView.setOnClickListener(click ->{
+            itemView.setOnClickListener(click -> {
 
+                /*
                 int position= getAbsoluteAdapterPosition();
                 AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
 
@@ -64,9 +67,16 @@ public class ChatRoom extends AppCompatActivity {
                         } ))
                         .create().show();
             });
+            */
 
-            messageText = itemView.findViewById(R.id.message);
-            timeText = itemView.findViewById(R.id.time);
+                int index = getAbsoluteAdapterPosition();
+                //ChatMessage selectedMessage = messages.get(index);
+
+                chatModel.selectedMessage.postValue(messages.get(index));
+
+                messageText = itemView.findViewById(R.id.message);
+                timeText = itemView.findViewById(R.id.time);
+            });
         }
     }
 
@@ -81,6 +91,23 @@ public class ChatRoom extends AppCompatActivity {
         
         //create chat view model
         chatModel = new ViewModelProvider(this).get(ChatRoomViewModel.class);
+
+        chatModel.selectedMessage.observe(this, newMessage ->{
+
+            if(newMessage != null) {
+                //new Message is what is posted to the value
+                MessageDetailsFragment detailsFragment = new MessageDetailsFragment(newMessage);
+                //show the fragment on screen:
+                FragmentManager fMgr = getSupportFragmentManager();
+
+                FragmentTransaction tx = fMgr.beginTransaction();
+                tx.addToBackStack("Doesn't matter which string");
+                tx.add(R.id.fragment_location, detailsFragment);
+                tx.commit(); //go and do for it
+            }
+    });
+
+
         messages = chatModel.messages.getValue();
         //get all messages from the database at the beginning
         if (messages == null) {

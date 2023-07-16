@@ -14,4 +14,7 @@ public class ChatRoomViewModel extends ViewModel {
     //    }
     //    return messages;
     //}
+
+
+    public MutableLiveData<ChatMessage> selectedMessage = new MutableLiveData<ChatMessage>(null);
 }
